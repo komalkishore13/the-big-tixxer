@@ -5,6 +5,30 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ---------- CROSS-SITE REDIRECT: Check if user came from a sub-site ----------
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectUrl = urlParams.get('redirect');
+
+  /**
+   * After successful login/signup, redirect back to the sub-site
+   * with auth data encoded in URL, or go to index.html.
+   */
+  function redirectAfterAuth(user) {
+    if (redirectUrl) {
+      // Encode user data and send back to the sub-site
+      const authData = btoa(JSON.stringify({
+        _id: user._id,
+        name: user.name,
+        email: user.email
+      }));
+      const separator = redirectUrl.includes('?') ? '&' : '?';
+      window.location.href = redirectUrl + separator + 'tixxer_auth=' + authData;
+    } else {
+      window.location.href = 'index.html';
+    }
+  }
+
+
   // ---------- UTILITY: Show toast notification ----------
   function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
@@ -151,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Account created! Redirecting...', 'success');
 
         setTimeout(() => {
-          window.location.href = 'index.html';
+          redirectAfterAuth(data.user);
         }, 1000);
       } catch (err) {
         btn.classList.remove('loading');
@@ -205,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Login successful! Redirecting...', 'success');
 
         setTimeout(() => {
-          window.location.href = 'index.html';
+          redirectAfterAuth(data.user);
         }, 1000);
       } catch (err) {
         btn.classList.remove('loading');
