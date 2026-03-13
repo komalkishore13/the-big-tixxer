@@ -3,7 +3,7 @@
    Connects frontend to Express backend via fetch()
    ================================================ */
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://tixxer-api.vercel.app';
 
 /**
  * Signup a new user.
